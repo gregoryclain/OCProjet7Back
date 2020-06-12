@@ -1,4 +1,5 @@
-var mysql = require("mysql");
+// var mysql = require("mysql");
+const Sequelize = require("sequelize");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -12,30 +13,34 @@ app.use((req, res, next) => {
   next();
 });
 
-// connexion
-console.log("Get connection ...");
-var conn = mysql.createConnection({
-  database: "ocp7",
-  host: "localhost",
-  user: "root",
-  password: "",
-});
+// db.sequelize.sync().then(() => {
+//   app.listen(PORT, () => {
+//     console.log("listening on :3000")
+//   })
+// })
 
-conn.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+// connexion bdd avec orm sequelize
+// const sequelize = new Sequelize("ocp7", "root", "", { host: "localhost", dialect: "mysql" });
+
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     console.log("Connection has been established successfully.");
+//   })
+//   .catch((err) => {
+//     console.error("Unable to connect to the database:", err);
+//   });
 
 app.use(bodyParser.json());
 // app.use(express.urlencoded({ extended: true, limit: "2b" }));
 app.use("/images", express.static(path.join(__dirname, "images"))); // définition du répertoire statique d'upload d'images
 
-// import des routes
-// const userRoutes = require("./routes/user");
-// const sauceRoutes = require("./routes/sauce");
+// // import des routes
+// var forumRoutes = require("./routes/forumRoutes");
+// // const sauceRoutes = require("./routes/sauce");
 
-// ajout des routes dans l'app
-// app.use("/api/auth", userRoutes);
-// app.use("/api/sauces", sauceRoutes);
+// // ajout des routes dans l'app
+// // app.use("/api/auth", userRoutes);
+// app.use("/api/forum", forumRoutes);
 
 module.exports = app;
