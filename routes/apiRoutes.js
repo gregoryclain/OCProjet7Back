@@ -9,6 +9,17 @@ router.get("/message/list", (req, res) => {
   });
 });
 
+// get single message bu id
+router.get("/message/find/:id", (req, res) => {
+  db.Message.findOne({
+    where: {
+      id: req.params.id,
+    },
+  }).then((message) => {
+    res.send(message);
+  });
+});
+
 // post message
 router.post("/message/new", (req, res) => {
   db.Message.create({
@@ -19,4 +30,31 @@ router.post("/message/new", (req, res) => {
   });
 });
 
+// delete message
+router.delete("/message/delete/:id", (req, res) => {
+  db.Message.destroy({
+    where: {
+      id: req.params.id,
+    },
+  }).then(() => {
+    res.send("success");
+  });
+});
+
+// update message
+router.put("/message/edit", (req, res) => {
+  db.Message.update(
+    {
+      title: req.body.title,
+      message: req.body.message,
+    },
+    {
+      where: {
+        id: req.body.id,
+      },
+    }
+  ).then(() => {
+    res.send("success");
+  });
+});
 module.exports = router;
