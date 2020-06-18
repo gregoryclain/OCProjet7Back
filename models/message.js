@@ -9,5 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   });
+  Message.associate = (models) => {
+    Message.belongsTo(models.User);
+  };
   return Message;
 };
