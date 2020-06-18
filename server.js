@@ -24,8 +24,12 @@ db.sequelize.sync().then(() => {
   });
 });
 
-const apiRoutes = require("./routes/apiRoutes");
-app.use("/api", apiRoutes);
+const messageRoutes = require("./routes/message");
+const roleRoutes = require("./routes/role");
+// const apiRoutes = require("./routes/apiRoutes");
+app.use("/api/roles", roleRoutes);
+app.use("/api/messages", messageRoutes);
+// app.use("/api", apiRoutes);
 // app.set("port", port);
 
 // const errorHandler = (error) => {
