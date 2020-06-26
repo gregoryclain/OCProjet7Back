@@ -2,9 +2,12 @@ const db = require("../models");
 
 // get all messages
 exports.list = (req, res, next) => {
-  db.Message.findAll().then((messages) => {
-    res.send(messages);
-  });
+  db.Message.findAll()
+    .then((messages) => {
+      // res.send(messages);
+      res.status(200).json({ messages });
+    })
+    .catch((error) => res.status(400).json({ error }));
 };
 
 // get single message bu id
@@ -23,9 +26,12 @@ exports.create = (req, res, next) => {
   db.Message.create({
     title: req.body.title,
     message: req.body.message,
-  }).then((last) => {
-    res.send(last);
-  });
+    userId: req.body.userId,
+  })
+    .then((last) => {
+      res.status(201).json({ last: last });
+    })
+    .catch((error) => res.status(400).json({ error }));
 };
 
 // delete message

@@ -13,14 +13,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// db.sequelize.sync().then(() => {
-//   app.listen(PORT, () => {
-//     console.log("listening on :3000")
-//   })
-// })
-
 // connexion bdd avec orm sequelize
-// const sequelize = new Sequelize("ocp7", "root", "", { host: "localhost", dialect: "mysql" });
 
 // sequelize
 //   .authenticate()
@@ -30,17 +23,25 @@ app.use((req, res, next) => {
 //   .catch((err) => {
 //     console.error("Unable to connect to the database:", err);
 //   });
+const db = require("./models");
+const PORT = process.env.PORT || "3000";
+db.sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log("Listening on : http://localhost:3000");
+  });
+});
 
 app.use(bodyParser.json());
 // app.use(express.urlencoded({ extended: true, limit: "2b" }));
 app.use("/images", express.static(path.join(__dirname, "images"))); // définition du répertoire statique d'upload d'images
 
-// // import des routes
-// var forumRoutes = require("./routes/forumRoutes");
-// // const sauceRoutes = require("./routes/sauce");
-
-// // ajout des routes dans l'app
-// // app.use("/api/auth", userRoutes);
-// app.use("/api/forum", forumRoutes);
+// import des routes
+const messageRoutes = require("./routes/message");
+const roleRoutes = require("./routes/role");
+const userRoutes = require("./routes/user");
+// const apiRoutes = require("./routes/apiRoutes");
+app.use("/api/roles", roleRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/users", userRoutes);
 
 module.exports = app;

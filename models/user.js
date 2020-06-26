@@ -16,10 +16,15 @@ module.exports = (sequelize, DataTypes) => {
       required: true,
       allowNull: false,
     },
+    roleId: {
+      type: DataTypes.STRING,
+      required: false,
+      defaultValue: "user",
+    },
   });
-  User.associate = (models) => {
-    User.belongsTo(models.Role);
-    User.hasMany(models.Message);
-  };
+  // User.associate = (models) => {
+  //   User.belongsTo(models.Role);
+  //   // User.hasMany(models.Message);
+  // };
   return User;
 };
