@@ -8,7 +8,8 @@ const messageCtrl = require("../controllers/messageController");
 router.post("/new", messageCtrl.create);
 router.delete("/delete/:id", messageCtrl.delete);
 router.put("/edit/:id", messageCtrl.edit);
-router.get("/:id", messageCtrl.getOne);
+router.get("/responses/:id", messageCtrl.listFromParent);
 router.get("/list", messageCtrl.list);
+router.get("/:id", messageCtrl.getOne);
 
 module.exports = router;

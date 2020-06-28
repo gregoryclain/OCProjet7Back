@@ -2,7 +2,25 @@ const db = require("../models");
 
 // get all messages
 exports.list = (req, res, next) => {
-  db.Message.findAll()
+  db.Message.findAll({
+    where: {
+      messageParentId: 0,
+    },
+  })
+    .then((messages) => {
+      // res.send(messages);
+      res.status(200).json({ messages });
+    })
+    .catch((error) => res.status(400).json({ error }));
+};
+
+// get message from parent id
+exports.listFromParent = (req, res, next) => {
+  db.Message.findAll({
+    where: {
+      messageParentId: req.params.id,
+    },
+  })
     .then((messages) => {
       // res.send(messages);
       res.status(200).json({ messages });
@@ -17,7 +35,8 @@ exports.getOne = (req, res, next) => {
       id: req.params.id,
     },
   }).then((message) => {
-    res.send(message);
+    res.status(200).json({ message });
+    // res.send(message);
   });
 };
 
@@ -27,6 +46,7 @@ exports.create = (req, res, next) => {
     title: req.body.title,
     message: req.body.message,
     userId: req.body.userId,
+    messageParentId: req.body.messageParentId,
   })
     .then((last) => {
       res.status(201).json({ last: last });

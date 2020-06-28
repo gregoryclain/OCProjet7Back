@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    messageParentId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   });
   // Message.associate = (models) => {
   //   Message.belongsTo(models.User);
