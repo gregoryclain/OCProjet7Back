@@ -1,3 +1,5 @@
+let multer = require("multer");
+const path = require("path");
 const db = require("../models");
 
 // get all messages
@@ -42,11 +44,16 @@ exports.getOne = (req, res, next) => {
 
 // post message
 exports.create = (req, res, next) => {
+  console.log(req.file);
+  console.log(req.body.message.title);
+  let msg = JSON.parse(req.body.message);
+  // res.status(400).json({ test: msg });
   db.Message.create({
-    title: req.body.title,
-    message: req.body.message,
-    userId: req.body.userId,
-    messageParentId: req.body.messageParentId,
+    title: msg.title,
+    message: msg.message,
+    userId: msg.userId,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+    messageParentId: msg.messageParentId,
   })
     .then((last) => {
       res.status(201).json({ last: last });
