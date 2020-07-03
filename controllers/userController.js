@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 // const User = require("../models/user");
 
 exports.signup = (req, res, next) => {
-  // const Role = db.User.belongsTo(db.Role, { as: "role" });
+  const Role = db.User.belongsTo(db.Role, { as: "role" }); // ne permet pas d'enregistrer + de 2 users
+  // const Role = db.User.belongsTo(db.Role, {}); // met le roleId dans user a null
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -14,19 +15,18 @@ exports.signup = (req, res, next) => {
         {
           email: req.body.email,
           password: hash,
-          role: "user",
-        }
+          role: { title: "user" },
+        },
 
-        // {
-        //   email: req.body.email,
-        //   password: hash,
-        //   role: {
-        //     title: "user",
+        {
+          include: [Role],
+        }
+        // [
+        //   {
+        //     association: db.User,
+        //     include: [db.User.role],
         //   },
-        // },
-        // {
-        //   include: [Role],
-        // }
+        // ]
       )
         .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
         .catch((error) => res.status(400).json({ error }));

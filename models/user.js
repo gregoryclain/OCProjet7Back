@@ -16,15 +16,20 @@ module.exports = (sequelize, DataTypes) => {
       required: true,
       allowNull: false,
     },
-    roleId: {
-      type: DataTypes.STRING,
-      required: false,
-      defaultValue: "user",
-    },
+    // roleId: {
+    //   type: DataTypes.INTEGER,
+    //   required: false,
+    //   defaultValue: 1,
+    // },
   });
-  // User.associate = (models) => {
-  //   User.belongsTo(models.Role);
-  //   // User.hasMany(models.Message);
-  // };
+  User.associate = (models) => {
+    User.belongsTo(models.Role, {
+      foreignKey: {
+        name: "roleId",
+      },
+      // foreignKey: "roleId",
+    });
+    // User.hasMany(models.Message);
+  };
   return User;
 };
