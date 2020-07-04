@@ -1,7 +1,8 @@
+var Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   const Role = sequelize.define("Role", {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -18,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     // },
 
     title: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING(255),
       allowNull: false,
       defaultValue: "user",
     },

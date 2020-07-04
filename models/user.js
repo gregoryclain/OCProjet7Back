@@ -1,35 +1,32 @@
+var Sequelize = require("sequelize");
+var Role = require("../models/role");
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("User", {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     email: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       required: true,
       allowNull: false,
       isEmail: true,
     },
     password: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       required: true,
       allowNull: false,
     },
     // roleId: {
-    //   type: DataTypes.INTEGER,
+    //   type: Sequelize.INTEGER,
     //   required: false,
     //   defaultValue: 1,
     // },
   });
-  User.associate = (models) => {
-    User.belongsTo(models.Role, {
-      foreignKey: {
-        name: "roleId",
-      },
-      // foreignKey: "roleId",
-    });
-    // User.hasMany(models.Message);
-  };
+  // User.associate = (models) => {
+  User.belongsTo(Role);
+  // User.hasMany(models.Message);
+  // };
   return User;
 };

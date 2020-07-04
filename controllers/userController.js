@@ -3,7 +3,6 @@ const db = require("../models");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// const User = require("../models/user");
 
 exports.signup = (req, res, next) => {
   const Role = db.User.belongsTo(db.Role, { as: "role" }); // ne permet pas d'enregistrer + de 2 users
@@ -21,12 +20,6 @@ exports.signup = (req, res, next) => {
         {
           include: [Role],
         }
-        // [
-        //   {
-        //     association: db.User,
-        //     include: [db.User.role],
-        //   },
-        // ]
       )
         .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
         .catch((error) => res.status(400).json({ error }));
