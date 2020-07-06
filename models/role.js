@@ -1,28 +1,21 @@
 module.exports = (sequelize, DataTypes) => {
-  const Role = sequelize.define("Role", {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
+  const Role = sequelize.define(
+    "Role",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
 
-    // group_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   defaultValue: 0,
-    // },
-    // user_id: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   defaultValue: 0,
-    // },
-
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "user",
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "user",
+      },
     },
-  });
+    { tableName: "role", timestamps: true, underscored: true }
+  );
   // Role.associate = (models) => {
   //   Role.hasMany(models.User);
   // };
