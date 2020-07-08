@@ -41,6 +41,10 @@ const User = connection.define("User", {
     //   isAlphanumeric: true,
     // },
   },
+  roleId: {
+    type: Sequelize.INTEGER,
+    defaultValue: 1,
+  },
 });
 
 // post model
@@ -84,7 +88,6 @@ app.post("/api/roles/new", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // delete role
 app.delete("/api/roles/delete/:id", (req, res) => {
   Role.destroy({
@@ -98,7 +101,6 @@ app.delete("/api/roles/delete/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // edit role
 app.put("/api/roles/edit/:id", (req, res) => {
   Role.update(
@@ -115,7 +117,6 @@ app.put("/api/roles/edit/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // get all roles
 app.get("/api/roles/list", (req, res) => {
   Role.findAll()
@@ -127,7 +128,6 @@ app.get("/api/roles/list", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // get one role
 app.get("/api/roles/:id", (req, res) => {
   Role.findOne({
@@ -146,7 +146,6 @@ app.get("/api/roles/:id", (req, res) => {
 
 // **************** user ****************
 // signup
-// router.post("/signup", userCtrl.signup);
 app.post("/api/users/signup", (req, res) => {
   bcrypt
     .hash(req.body.password, 10)
@@ -154,6 +153,7 @@ app.post("/api/users/signup", (req, res) => {
       User.create({
         email: req.body.email,
         password: hash,
+        roleId: 1,
         // role: { title: "user" },
       })
         .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
@@ -162,12 +162,13 @@ app.post("/api/users/signup", (req, res) => {
     .catch((error) => res.status(500).json({ error }));
 });
 // login
-// router.post("/login", userCtrl.login);
 app.post("/api/users/login", (req, res) => {
+  console.log("login !!!");
   User.findOne({
     where: {
       email: req.body.email,
     },
+    include: [Role],
   })
     .then((user) => {
       if (!user) {
@@ -191,12 +192,7 @@ app.post("/api/users/login", (req, res) => {
 });
 
 // **************** post ****************
-
-// router.get("/responses/:id", messageCtrl.listFromParent);
-// router.get("/list", messageCtrl.list);
-
 // create post
-// router.post("/new", multer, messageCtrl.create);
 app.post("/api/messages/new", (req, res) => {
   let msg = JSON.parse(req.body.message);
   Post.create({
@@ -214,9 +210,7 @@ app.post("/api/messages/new", (req, res) => {
       res.status(400).send(error);
     });
 });
-
 // delete post
-// router.delete("/delete/:id", messageCtrl.delete);
 app.delete("/api/messages/delete/:id", (req, res) => {
   Post.destroy({
     where: { id: req.params.id },
@@ -229,9 +223,7 @@ app.delete("/api/messages/delete/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // edit post
-// router.put("/edit /: id", messageCtrl.edit);
 app.put("/api/messages/edit/:id", (req, res) => {
   Post.update(
     {
@@ -250,9 +242,7 @@ app.put("/api/messages/edit/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // get message from parent id
-//router.get("/responses/:id", messageCtrl.listFromParent);
 app.get("/api/messages/responses/:id", (req, res) => {
   Post.findOne({
     where: {
@@ -267,7 +257,6 @@ app.get("/api/messages/responses/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // get all post
 app.get("/api/messages/list", (req, res) => {
   Post.findAll({
@@ -283,9 +272,7 @@ app.get("/api/messages/list", (req, res) => {
       res.status(404).send(error);
     });
 });
-
 // get one post
-// router.get("/:id", messageCtrl.getOne);
 app.get("/api/messages/:id", (req, res) => {
   Post.findOne({
     where: {
