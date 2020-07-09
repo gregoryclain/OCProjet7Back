@@ -6,8 +6,12 @@ const Sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
+// let multer = require("multer");
+const multer = require("./middleware/multer-config");
+const path = require("path");
 const app = express();
 const port = 3000;
+// let upload = multer();
 
 // gestion cors
 app.use((req, res, next) => {
@@ -67,6 +71,10 @@ const Post = connection.define("Post", {
     type: Sequelize.TEXT,
     allowNull: false,
   },
+  userId: {
+    type: Sequelize.INTEGER,
+    defaultValue: 1,
+  },
 });
 
 // role model
@@ -74,6 +82,11 @@ const Role = connection.define("Role", {
   title: Sequelize.STRING(255),
 });
 
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  })
+);
 app.use(bodyParser.json());
 // **************** routes role ****************
 // create role
@@ -163,7 +176,6 @@ app.post("/api/users/signup", (req, res) => {
 });
 // login
 app.post("/api/users/login", (req, res) => {
-  console.log("login !!!");
   User.findOne({
     where: {
       email: req.body.email,
@@ -193,7 +205,7 @@ app.post("/api/users/login", (req, res) => {
 
 // **************** post ****************
 // create post
-app.post("/api/messages/new", (req, res) => {
+app.post("/api/messages/new", multer, (req, res) => {
   let msg = JSON.parse(req.body.message);
   Post.create({
     title: msg.title,
@@ -248,6 +260,7 @@ app.get("/api/messages/responses/:id", (req, res) => {
     where: {
       messageParentId: req.params.id,
     },
+    include: [User],
   })
     .then((messages) => {
       res.status(200).json({ messages });
@@ -263,9 +276,10 @@ app.get("/api/messages/list", (req, res) => {
     where: {
       messageParentId: 0,
     },
+    include: [User],
   })
-    .then((posts) => {
-      res.json(posts);
+    .then((messages) => {
+      res.status(200).json(messages);
     })
     .catch((error) => {
       console.log(error);
