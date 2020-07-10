@@ -88,6 +88,7 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+app.use("/images", express.static(path.join(__dirname, "images"))); // définition du
 // **************** routes role ****************
 // create role
 app.post("/api/roles/new", (req, res) => {
@@ -119,7 +120,7 @@ app.put("/api/roles/edit/:id", (req, res) => {
   Role.update(
     { title: req.body.title },
     {
-      where: { id: params.id },
+      where: { id: reqparams.id },
     }
   )
     .then((role) => {
@@ -236,14 +237,15 @@ app.delete("/api/messages/delete/:id", (req, res) => {
     });
 });
 // edit post
-app.put("/api/messages/edit/:id", (req, res) => {
+app.put("/api/messages/edit/:id", multer, (req, res) => {
+  let msg = JSON.parse(req.body.message);
   Post.update(
     {
-      title: req.body.title,
-      message: req.body.message,
+      title: msg.title,
+      message: msg.message,
     },
     {
-      where: { id: params.id },
+      where: { id: req.params.id },
     }
   )
     .then((message) => {
@@ -256,7 +258,7 @@ app.put("/api/messages/edit/:id", (req, res) => {
 });
 // get message from parent id
 app.get("/api/messages/responses/:id", (req, res) => {
-  Post.findOne({
+  Post.findAll({
     where: {
       messageParentId: req.params.id,
     },
@@ -292,6 +294,7 @@ app.get("/api/messages/:id", (req, res) => {
     where: {
       id: req.params.id,
     },
+    include: [User],
   })
     .then((message) => {
       res.status(200).json({ message });
