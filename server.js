@@ -175,6 +175,18 @@ app.post("/api/users/signup", (req, res) => {
     })
     .catch((error) => res.status(500).json({ error }));
 });
+
+// delete
+app.delete("/api/users/delete/:id", (req, res) => {
+  User.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(() => res.status(201).json({ message: "Utilisateur détruit !" }))
+    .catch((error) => res.status(400).json({ error }));
+});
+
 // login
 app.post("/api/users/login", (req, res) => {
   User.findOne({
@@ -314,8 +326,13 @@ app.get("/api/messages/:id", (req, res) => {
     });
 });
 
-User.belongsTo(Role, { foreignKey: "roleId" });
-Post.belongsTo(User, { foreignKey: "userId" }); // la meme chose mais si on veut spécifier explicitement la clé étrangère
+User.belongsTo(Role, { foreignKey: "roleId", onDelete: "CASCADE" });
+Post.belongsTo(User, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  hooks: true,
+}); // si on veut spécifier explicitement la clé étrangère
+
 connection
   .sync({
     logging: console.log,
