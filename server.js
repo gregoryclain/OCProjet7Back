@@ -215,8 +215,15 @@ app.post("/api/messages/new", multer, (req, res) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
     messageParentId: msg.messageParentId,
   })
-    .then((last) => {
-      res.status(201).json({ last: last });
+    .then((post) => {
+      Post.findOne({
+        where: {
+          id: post.id,
+        },
+        include: [User],
+      }).then((newPost) => {
+        res.status(201).json({ last: newPost });
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -246,6 +253,7 @@ app.put("/api/messages/edit/:id", multer, (req, res) => {
     },
     {
       where: { id: req.params.id },
+      include: [User],
     }
   )
     .then((message) => {
@@ -263,6 +271,7 @@ app.get("/api/messages/responses/:id", (req, res) => {
       messageParentId: req.params.id,
     },
     include: [User],
+    order: [["createdAt", "ASC"]],
   })
     .then((messages) => {
       res.status(200).json({ messages });
