@@ -1,17 +1,14 @@
-const http = require("http");
+// const http = require("http");
 require("dotenv").config();
-// const app = require("./app");
 const express = require("express");
 const Sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-// let multer = require("multer");
 const multer = require("./middleware/multer-config");
 const path = require("path");
 const app = express();
 const port = 3000;
-// let upload = multer();
 
 // gestion cors
 app.use((req, res, next) => {
@@ -30,7 +27,8 @@ const connection = new Sequelize("ocp7new", "root", "", {
   },
 });
 
-// user model
+// **************** MODELE *********************
+// **************** user ***********************
 const User = connection.define("User", {
   name: Sequelize.STRING(255),
   email: {
@@ -51,7 +49,8 @@ const User = connection.define("User", {
   },
 });
 
-// post model
+// **************** MODELE *********************
+// **************** post ***********************
 const Post = connection.define("Post", {
   id: {
     primaryKey: true,
@@ -77,7 +76,8 @@ const Post = connection.define("Post", {
   },
 });
 
-// role model
+// **************** MODELE *********************
+// **************** role ***********************
 const Role = connection.define("Role", {
   title: Sequelize.STRING(255),
 });
@@ -88,8 +88,11 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use("/images", express.static(path.join(__dirname, "images"))); // définition du
-// **************** routes role ****************
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+// **************** ROUTES *********************
+// **************** role ***********************
+// *********************************************
 // create role
 app.post("/api/roles/new", (req, res) => {
   const newRole = req.body.role;
@@ -158,7 +161,9 @@ app.get("/api/roles/:id", (req, res) => {
     });
 });
 
-// **************** user ****************
+// **************** ROUTES *********************
+// **************** user ***********************
+// *********************************************
 // signup
 app.post("/api/users/signup", (req, res) => {
   bcrypt
@@ -229,7 +234,9 @@ app.get("/api/users/list", (req, res) => {
     });
 });
 
-// **************** post ****************
+// **************** ROUTES *********************
+// **************** post ***********************
+// *********************************************
 // create post
 app.post("/api/messages/new", multer, (req, res) => {
   let msg = JSON.parse(req.body.message);
@@ -398,6 +405,10 @@ app.get("/api/messages/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
+
+// ***************************************************
+// **************** ASSOCIATIONS *********************
+// ***************************************************
 
 User.belongsTo(Role, { foreignKey: "roleId", onDelete: "CASCADE" });
 Post.belongsTo(User, {
