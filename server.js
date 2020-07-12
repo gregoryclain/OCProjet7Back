@@ -166,6 +166,7 @@ app.post("/api/users/signup", (req, res) => {
     .then((hash) => {
       User.create({
         email: req.body.email,
+        name: req.body.name,
         password: hash,
         roleId: 1,
         // role: { title: "user" },
@@ -216,15 +217,31 @@ app.post("/api/users/login", (req, res) => {
     .catch((error) => res.status(500).json({ error }));
 });
 
+// get all users
+app.get("/api/users/list", (req, res) => {
+  User.findAll()
+    .then((users) => {
+      res.json(users);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
 // **************** post ****************
 // create post
 app.post("/api/messages/new", multer, (req, res) => {
   let msg = JSON.parse(req.body.message);
+  let imageUrl = null;
+  if (req.file) {
+    imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  }
   Post.create({
     title: msg.title,
     message: msg.message,
     userId: msg.userId,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+    imageUrl: imageUrl,
     messageParentId: msg.messageParentId,
   })
     .then((post) => {
@@ -317,9 +334,27 @@ app.get("/api/messages/last/:id", (req, res) => {
 app.get("/api/messages/parent/list", (req, res) => {
   Post.findAll({
     where: {
-      messageParentId: 0,
+      messageParentId: "0",
     },
     include: [User],
+    order: [["createdAt", "DESC"]],
+  })
+    .then((messages) => {
+      res.status(200).json(messages);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
+// get all post from one user
+app.get("/api/messages/list/user/:id", (req, res) => {
+  Post.findAll({
+    where: {
+      userId: req.params.id,
+    },
+    // include: [User],
     order: [["createdAt", "DESC"]],
   })
     .then((messages) => {
@@ -334,6 +369,7 @@ app.get("/api/messages/parent/list", (req, res) => {
 // get all post
 app.get("/api/messages/list", (req, res) => {
   Post.findAll({
+    limit: 10,
     include: [User],
     order: [["createdAt", "DESC"]],
   })
