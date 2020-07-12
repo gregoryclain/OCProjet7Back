@@ -64,7 +64,7 @@ const Post = connection.define("Post", {
     allowNull: true,
   },
   messageParentId: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.Sequelize.UUID,
     allowNull: true,
   },
   message: {
@@ -293,6 +293,26 @@ app.get("/api/messages/responses/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
+
+// get last message from parent id
+app.get("/api/messages/last/:id", (req, res) => {
+  Post.findAll({
+    limit: 1,
+    where: {
+      messageParentId: req.params.id,
+    },
+    include: [User],
+    order: [["createdAt", "DESC"]],
+  })
+    .then((last) => {
+      res.status(200).json({ last });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
 // get all post
 app.get("/api/messages/list", (req, res) => {
   Post.findAll({
@@ -300,6 +320,7 @@ app.get("/api/messages/list", (req, res) => {
       messageParentId: 0,
     },
     include: [User],
+    order: [["createdAt", "DESC"]],
   })
     .then((messages) => {
       res.status(200).json(messages);
