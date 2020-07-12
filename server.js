@@ -313,8 +313,8 @@ app.get("/api/messages/last/:id", (req, res) => {
     });
 });
 
-// get all post
-app.get("/api/messages/list", (req, res) => {
+// get all parent post
+app.get("/api/messages/parent/list", (req, res) => {
   Post.findAll({
     where: {
       messageParentId: 0,
@@ -330,6 +330,22 @@ app.get("/api/messages/list", (req, res) => {
       res.status(404).send(error);
     });
 });
+
+// get all post
+app.get("/api/messages/list", (req, res) => {
+  Post.findAll({
+    include: [User],
+    order: [["createdAt", "DESC"]],
+  })
+    .then((messages) => {
+      res.status(200).json(messages);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(404).send(error);
+    });
+});
+
 // get one post
 app.get("/api/messages/:id", (req, res) => {
   Post.findOne({
