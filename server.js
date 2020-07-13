@@ -21,8 +21,14 @@ app.use((req, res, next) => {
 });
 
 // database connexion info
-const connection = new Sequelize("ocp7new", "root", "", {
-  host: "localhost",
+
+const dbName = process.env.DB_NAME;
+const dbHost = process.env.DB_HOST;
+const dbUser = process.env.DB_USER;
+const dbPass = process.env.DB_PASS;
+
+const connection = new Sequelize(dbName, dbUser, dbPass, {
+  host: dbHost,
   dialect: "mysql",
   define: {
     freezeTableName: true,
@@ -427,8 +433,21 @@ connection
   .sync({
     logging: console.log,
     // force: true, // pour forcer recréation bdd ?
+    // force: true,
+    alter: true,
   })
   .then(() => {
+    Role.findAll().then((roles) => {
+      if (roles.length == 0) {
+        Role.create({
+          title: "user",
+        });
+        Role.create({
+          title: "iscom",
+        });
+      }
+    });
+
     // Role.create({
     //   title: "user",
     // });
