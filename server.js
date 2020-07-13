@@ -38,6 +38,10 @@ const User = connection.define("User", {
     validate: {
       isEmail: true,
     },
+    unique: {
+      args: true,
+      msg: "Email address already in use!",
+    },
   },
   password: {
     type: Sequelize.STRING,
