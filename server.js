@@ -10,7 +10,7 @@ const auth = require("./middleware/auth");
 const { apiLimiter } = require("./middleware/ratelimit");
 const path = require("path");
 const app = express();
-const port = 3000;
+const port = process.env.APP_PORT;
 
 // gestion cors
 app.use((req, res, next) => {
