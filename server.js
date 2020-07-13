@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const multer = require("./middleware/multer-config");
+const auth = require("./middleware/auth");
+const { apiLimiter } = require("./middleware/ratelimit");
 const path = require("path");
 const app = express();
 const port = 3000;
@@ -183,7 +185,7 @@ app.post("/api/users/signup", (req, res) => {
 });
 
 // delete
-app.delete("/api/users/delete/:id", (req, res) => {
+app.delete("/api/users/delete/:id", auth, (req, res) => {
   User.destroy({
     where: {
       id: req.params.id,
@@ -194,7 +196,7 @@ app.delete("/api/users/delete/:id", (req, res) => {
 });
 
 // login
-app.post("/api/users/login", (req, res) => {
+app.post("/api/users/login", apiLimiter, (req, res) => {
   User.findOne({
     where: {
       email: req.body.email,
@@ -238,7 +240,7 @@ app.get("/api/users/list", (req, res) => {
 // **************** post ***********************
 // *********************************************
 // create post
-app.post("/api/messages/new", multer, (req, res) => {
+app.post("/api/messages/new", auth, multer, (req, res) => {
   let msg = JSON.parse(req.body.message);
   let imageUrl = null;
   if (req.file) {
@@ -267,7 +269,7 @@ app.post("/api/messages/new", multer, (req, res) => {
     });
 });
 // delete post
-app.delete("/api/messages/delete/:id", (req, res) => {
+app.delete("/api/messages/delete/:id", auth, (req, res) => {
   Post.destroy({
     where: { id: req.params.id },
   })
@@ -280,7 +282,7 @@ app.delete("/api/messages/delete/:id", (req, res) => {
     });
 });
 // edit post
-app.put("/api/messages/edit/:id", multer, (req, res) => {
+app.put("/api/messages/edit/:id", auth, multer, (req, res) => {
   let msg = JSON.parse(req.body.message);
   Post.update(
     {
@@ -301,7 +303,7 @@ app.put("/api/messages/edit/:id", multer, (req, res) => {
     });
 });
 // get message from parent id
-app.get("/api/messages/responses/:id", (req, res) => {
+app.get("/api/messages/responses/:id", auth, (req, res) => {
   Post.findAll({
     where: {
       messageParentId: req.params.id,
@@ -319,7 +321,7 @@ app.get("/api/messages/responses/:id", (req, res) => {
 });
 
 // get last message from parent id
-app.get("/api/messages/last/:id", (req, res) => {
+app.get("/api/messages/last/:id", auth, (req, res) => {
   Post.findAll({
     limit: 1,
     where: {
@@ -338,7 +340,7 @@ app.get("/api/messages/last/:id", (req, res) => {
 });
 
 // get all parent post
-app.get("/api/messages/parent/list", (req, res) => {
+app.get("/api/messages/parent/list", auth, (req, res) => {
   Post.findAll({
     where: {
       messageParentId: "0",
@@ -356,7 +358,7 @@ app.get("/api/messages/parent/list", (req, res) => {
 });
 
 // get all post from one user
-app.get("/api/messages/list/user/:id", (req, res) => {
+app.get("/api/messages/list/user/:id", auth, (req, res) => {
   Post.findAll({
     where: {
       userId: req.params.id,
@@ -374,7 +376,7 @@ app.get("/api/messages/list/user/:id", (req, res) => {
 });
 
 // get all post
-app.get("/api/messages/list", (req, res) => {
+app.get("/api/messages/list", auth, (req, res) => {
   Post.findAll({
     limit: 10,
     include: [User],
@@ -390,7 +392,7 @@ app.get("/api/messages/list", (req, res) => {
 });
 
 // get one post
-app.get("/api/messages/:id", (req, res) => {
+app.get("/api/messages/:id", auth, (req, res) => {
   Post.findOne({
     where: {
       id: req.params.id,
