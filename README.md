@@ -2,9 +2,12 @@
 
 # Pour installer le BACKOFFICE :
 
-1 - Renommer le fichier ".env.example" en ".env"
-2 - Changer les variables "SECRET", "DB_NAME", "DB_HOST", "DB_USER", "DB_PASS" en fonction de votre environement de travail
-3 - Executer la commande npm install pour installer les dépendances
+1 - Renommer le fichier ".env.example" en ".env"<br>
+2 - Dans ce fichier env, en fonction de votre environement de travail, changer les variables :<br>
+<ul>
+  <li>"SECRET",</li> <li>"DB_NAME",</li> <li>"DB_HOST",</li> <li>"DB_USER",</li> <li>"DB_PASS"</li> 
+ </ul>
+3 - Executer la commande npm install pour installer les dépendances<br>
 
 # Pour lancer le BACKOFFICE :
 
